@@ -8,14 +8,18 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
-  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { FilesService } from './files.service';
-import { Express, Response } from 'express';
+import { Express } from 'express';
 import { UpdateFileDto } from './dto/update-file.dto';
-import { ApiTags, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiConsumes, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ObjectId } from 'mongoose';
+import { JwtAuthGuard } from 'src/utils/Auth/JwtAuthGuard';
+
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @ApiTags('Files')
 @Controller('files')
 export class FilesController {
@@ -50,12 +54,9 @@ export class FilesController {
     // @Res({ passthrough: true }) res: Response,
   ) {
     // const file = await this.filesService.findOne(id);
-    // res.headers.
-    // console.log('FILE');
     // res.set({
     //   'content-type': file.getHeaders().type,
     // });
-    // console.log(file.getHeaders());
     // file.getStream().pipe(res);
     return this.filesService.findOne(id);
   }
