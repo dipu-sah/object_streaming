@@ -6,20 +6,37 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  UploadedFile,
+  Res,
 } from '@nestjs/common';
 import { FilesService } from './files.service';
-import { CreateFileDto } from './dto/create-file.dto';
+import { Express, Response } from 'express';
 import { UpdateFileDto } from './dto/update-file.dto';
-import { ApiTags } from '@nestjs/swagger';
-
+import { ApiTags, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ObjectId } from 'mongoose';
 @ApiTags('Files')
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
+  @ApiConsumes('multipart/form-data')
   @Post()
-  create(@Body() createFileDto: CreateFileDto) {
-    return this.filesService.create(createFileDto);
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  create(@UploadedFile('file') file: Express.Multer.File) {
+    return this.filesService.create(file);
   }
 
   @Get()
@@ -28,8 +45,19 @@ export class FilesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.filesService.findOne(+id);
+  async findOne(
+    @Param('id') id: ObjectId,
+    // @Res({ passthrough: true }) res: Response,
+  ) {
+    // const file = await this.filesService.findOne(id);
+    // res.headers.
+    // console.log('FILE');
+    // res.set({
+    //   'content-type': file.getHeaders().type,
+    // });
+    // console.log(file.getHeaders());
+    // file.getStream().pipe(res);
+    return this.filesService.findOne(id);
   }
 
   @Patch(':id')
