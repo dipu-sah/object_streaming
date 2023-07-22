@@ -14,6 +14,7 @@ import { CreateBucketDto } from './dto/create-bucket.dto';
 import { UpdateBucketDto } from './dto/update-bucket.dto';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/utils/Auth/JwtAuthGuard';
+import { AuthenticatedRequest } from 'src/@types/AuthenticatedRequest';
 
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
@@ -23,27 +24,34 @@ export class BucketsController {
   constructor(private readonly bucketsService: BucketsService) {}
 
   @Post()
-  create(@Body() createBucketDto: CreateBucketDto) {
-    return this.bucketsService.create(createBucketDto);
+  create(
+    @Body() createBucketDto: CreateBucketDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.bucketsService.create(req.user.id, createBucketDto);
   }
 
   @Get()
-  findAll() {
-    return this.bucketsService.findAll();
+  findAll(@Req() req: AuthenticatedRequest) {
+    return this.bucketsService.findAll(req.user.id);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bucketsService.findOne(+id);
+  findOne(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    return this.bucketsService.findOne(id, req.user._id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBucketDto: UpdateBucketDto) {
-    return this.bucketsService.update(+id, updateBucketDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateBucketDto: UpdateBucketDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.bucketsService.update(id, req.user._id, updateBucketDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.bucketsService.remove(+id);
+  remove(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    return this.bucketsService.remove(id, req.user._id);
   }
 }
