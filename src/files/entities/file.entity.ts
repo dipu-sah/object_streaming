@@ -3,8 +3,11 @@ import { HydratedDocument, Types, Mixed } from 'mongoose';
 import { iBucketFile } from 'src/@types/iFile';
 @Schema()
 export class BucketFile implements iBucketFile {
-  @Prop({ type: Types.ObjectId, required: true })
-  userId: Types.ObjectId;
+  // @Prop({ type: Types.ObjectId, required: true })
+  // userId: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, required: true, ref: BucketFile.name })
+  bucketId: Types.ObjectId;
 
   @Prop({ type: Types.Buffer, required: true })
   object: Buffer;

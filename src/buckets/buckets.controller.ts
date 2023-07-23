@@ -28,12 +28,12 @@ export class BucketsController {
     @Body() createBucketDto: CreateBucketDto,
     @Req() req: AuthenticatedRequest,
   ) {
-    return this.bucketsService.create(req.user.id, createBucketDto);
+    return this.bucketsService.create(req.user._id, createBucketDto);
   }
 
   @Get()
   findAll(@Req() req: AuthenticatedRequest) {
-    return this.bucketsService.findAll(req.user.id);
+    return this.bucketsService.findAll(req.user._id);
   }
 
   @Get(':id')

@@ -16,7 +16,7 @@ export class BucketsService {
   }
 
   findAll(userId: Types.ObjectId) {
-    return this.bucketModel.find({ userId });
+    return this.bucketModel.find({ userId: new Types.ObjectId(userId) });
   }
 
   findOne(id: string, userId: Types.ObjectId) {
